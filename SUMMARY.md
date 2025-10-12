@@ -52,22 +52,29 @@ A production-ready REST API that provides:
         └── __init__.py
 ```
 
-### Documentation (5 files)
+### Documentation (6 files)
 ```
-├── README.md                   # Comprehensive documentation (200+ lines)
+├── README.md                   # Comprehensive documentation (500+ lines)
 ├── QUICKSTART.md              # Quick start guide
+├── START_HERE.md              # Your starting point
+├── WINDOWS_GUIDE.md           # WSL2 setup guide
 ├── PROJECT_STATUS.md          # Implementation checklist
 ├── SUMMARY.md                 # This file
 └── env.example                # Environment variables template
 ```
 
-### Utilities (2 files)
+### Utilities & Testing (2 files)
 ```
 ├── test_api.py                # API testing script
 └── .gitignore                 # Git ignore rules
 ```
 
-**Total: 27 files created**
+### Additional Documentation (1 file)
+```
+└── WINDOWS_GUIDE.md           # WSL2 setup guide
+```
+
+**Total: 27 files**
 
 ## 🔑 Key Features Implemented
 
@@ -168,16 +175,40 @@ Each resource supports: LIST, CREATE, RETRIEVE, UPDATE, DELETE
 
 ## 🚀 How to Use
 
-### Start the Application
+### Start the Application (WSL2)
+
+Open WSL2 (Ubuntu) and run:
+
 ```bash
-# In the project directory (E:\dvdrental)
-docker-compose up --build
+cd /mnt/e/dvdrental
+docker compose up --build
 ```
 
-Wait 2-3 minutes for initialization, then access:
+Wait 2-3 minutes for initialization, then access from Windows browser:
 - **Swagger UI**: http://localhost:8000/swagger/
 - **API**: http://localhost:8000/api/
 - **Admin**: http://localhost:8000/admin/
+
+### WSL2 Docker Commands
+
+```bash
+# Start in background
+docker compose up -d
+
+# Stop
+docker compose down
+
+# View logs
+docker compose logs -f
+
+# Restart
+docker compose restart
+
+# Reset everything
+docker compose down -v
+```
+
+See `WINDOWS_GUIDE.md` for WSL2 setup instructions.
 
 ### Default Credentials
 ```

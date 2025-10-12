@@ -151,8 +151,7 @@ class StaffSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Staff
-        fields = '__all__'
-        extra_kwargs = {'picture': {'write_only': True}}
+        exclude = ['picture']  # Exclude binary field to avoid serialization issues
 
 
 class CustomerSerializer(serializers.ModelSerializer):

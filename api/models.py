@@ -139,25 +139,27 @@ class Film(models.Model):
 
 
 class FilmActor(models.Model):
-    actor = models.ForeignKey(Actor, on_delete=models.DO_NOTHING, primary_key=True)
-    film = models.ForeignKey(Film, on_delete=models.DO_NOTHING)
+    actor = models.ForeignKey(Actor, on_delete=models.DO_NOTHING, db_column='actor_id')
+    film = models.ForeignKey(Film, on_delete=models.DO_NOTHING, db_column='film_id')
     last_update = models.DateTimeField(auto_now=True)
 
     class Meta:
         managed = False
         db_table = 'film_actor'
         unique_together = (('actor', 'film'),)
+        # Composite primary key in database: (actor_id, film_id)
 
 
 class FilmCategory(models.Model):
-    film = models.ForeignKey(Film, on_delete=models.DO_NOTHING, primary_key=True)
-    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING)
+    film = models.ForeignKey(Film, on_delete=models.DO_NOTHING, db_column='film_id')
+    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, db_column='category_id')
     last_update = models.DateTimeField(auto_now=True)
 
     class Meta:
         managed = False
         db_table = 'film_category'
         unique_together = (('film', 'category'),)
+        # Composite primary key in database: (film_id, category_id)
 
 
 class Store(models.Model):

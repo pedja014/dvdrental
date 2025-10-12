@@ -18,9 +18,12 @@ A professional-grade REST API with:
 ## 🎯 Quick Start (3 Steps)
 
 ### Step 1: Start Docker Containers
+
+Open WSL2 (Ubuntu) and run:
+
 ```bash
-cd E:\dvdrental
-docker-compose up --build
+cd /mnt/e/dvdrental
+docker compose up --build
 ```
 
 ⏳ Wait 2-3 minutes for:
@@ -128,27 +131,40 @@ Each supports: LIST, CREATE, RETRIEVE, UPDATE, DELETE
 | **staff** | Manage inventory, rentals, customers |
 | **customer** | View catalog, own rentals |
 
-## 🛠️ Useful Commands
+## 🛠️ Useful Commands (WSL2)
 
 ```bash
 # Stop the application
-docker-compose down
+docker compose down
+
+# Start in background
+docker compose up -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Restart
-docker-compose restart
+docker compose restart
+
+# Check status
+docker compose ps
 
 # Access Django shell
-docker-compose exec web python manage.py shell
+docker compose exec web python manage.py shell
 
 # Create new user
-docker-compose exec web python manage.py createsuperuser
+docker compose exec web python manage.py createsuperuser
 
 # Run tests
-docker-compose exec web python manage.py test
+docker compose exec web python manage.py test
+
+# Reset everything (deletes data)
+docker compose down -v
+docker compose up --build
 ```
+
+### WSL2 Setup Guide
+See `WINDOWS_GUIDE.md` for detailed WSL2 setup and troubleshooting
 
 ## 📊 What's in the Database?
 
