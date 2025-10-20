@@ -329,6 +329,53 @@ docker-compose down -v
 docker-compose up --build
 ```
 
+## pgAdmin (Optional)
+
+Start pgAdmin UI:
+```bash
+docker compose up -d pgadmin
+```
+
+Open `http://localhost:5050` and log in with:
+- Email: `admin@example.com`
+- Password: `admin123`
+
+Add a connection:
+- Name: `dvdrental`
+- Host: `db`
+- Port: `5432`
+- Username: `postgres`
+- Password: `postgres123`
+
+If 5050 is taken, change the mapping in `docker-compose.yml` (e.g., `"5051:80"`).
+
+### pgAdmin troubleshooting: preconfigured server not visible
+pgAdmin reads `servers.json` only on the first run. If you don't see the "dvdrental" server:
+
+```bash
+docker compose stop pgadmin
+docker compose rm -f -v pgadmin
+# remove its data volume (name may differ; list with: docker volume ls | grep pgadmin)
+docker volume rm dvdrental_pgadmin_data || true
+docker compose up -d pgadmin
+```
+
+Reopen `http://localhost:5050` and log in.
+
+### dvdrental tables missing (e.g., "relation 'actor' does not exist")
+If Admin or API pages fail with `ProgrammingError: relation "actor" does not exist`, your Postgres volume already existed and the `init-db.sh` import did not run. Reset the volume to trigger a fresh dvdrental restore:
+
+```bash
+docker compose down -v   # WARNING: deletes database volume
+docker compose up --build
+```
+
+After start, verify data is present:
+
+```bash
+docker compose exec db psql -U postgres -d dvdrental -c "select count(*) from actor;"
+```
+
 ## Production Considerations
 
 Before deploying to production:

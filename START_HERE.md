@@ -163,6 +163,39 @@ docker compose down -v
 docker compose up --build
 ```
 
+## 🗄️ Optional: pgAdmin (GUI for PostgreSQL)
+
+Start pgAdmin:
+```bash
+docker compose up -d pgadmin
+```
+
+Open `http://localhost:5050` and log in:
+- Email: `admin@example.com`
+- Password: `admin123`
+
+Add a new server in pgAdmin:
+- Name: `dvdrental`
+- Host: `db`
+- Port: `5432`
+- Username: `postgres`
+- Password: `postgres123`
+
+If port 5050 is busy, change the port mapping in `docker-compose.yml` (e.g., `"5051:80"`).
+
+### pgAdmin troubleshooting: server not preconfigured
+pgAdmin imports `servers.json` only on first start. If you don't see the preconfigured "dvdrental" server:
+
+```bash
+docker compose stop pgadmin
+docker compose rm -f -v pgadmin
+# remove the pgadmin data volume (name may vary; list volumes to confirm)
+docker volume rm dvdrental_pgadmin_data || true
+docker compose up -d pgadmin
+```
+
+Then refresh `http://localhost:5050` and log in again.
+
 ### WSL2 Setup Guide
 See `WINDOWS_GUIDE.md` for detailed WSL2 setup and troubleshooting
 
@@ -243,6 +276,20 @@ E:\dvdrental\
 ```bash
 docker-compose down
 docker-compose up --build
+```
+
+### dvdrental tables missing (e.g., "relation 'actor' does not exist")
+If you see errors like `ProgrammingError: relation "actor" does not exist` in Admin or API, the database volume already existed and the auto-restore did not run. Reset the DB volume to re-trigger the dvdrental restore:
+
+```bash
+docker compose down -v   # WARNING: deletes the database volume
+docker compose up --build
+```
+
+Then wait ~2–4 minutes for the dvdrental dump to download and restore. You can verify from the DB container:
+
+```bash
+docker compose exec db psql -U postgres -d dvdrental -c "select count(*) from actor;"
 ```
 
 ### Port 8000 already in use?
