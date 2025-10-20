@@ -17,12 +17,14 @@ A professional-grade REST API with:
 
 ## 🎯 Quick Start (3 Steps)
 
-### Step 1: Start Docker Containers
+### Step 1: Configure environment
 
 Open WSL2 (Ubuntu) and run:
 
 ```bash
 cd /mnt/e/dvdrental
+cp .env.example .env
+# Edit .env and set SECRET_KEY and passwords (never commit real secrets)
 docker compose up --build
 ```
 
@@ -39,11 +41,7 @@ Once you see "Gunicorn is running", visit:
 🌐 **Admin Panel**: http://localhost:8000/admin/  
 
 ### Step 3: Login and Explore
-**Default credentials:**
-```
-Username: admin
-Password: admin123
-```
+Use the credentials you set in `.env` (`ADMIN_USERNAME`, `ADMIN_PASSWORD`).
 
 In Swagger UI:
 1. Click **"Authorize"** button (top right)

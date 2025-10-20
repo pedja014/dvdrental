@@ -2,7 +2,14 @@
 
 ## Get Up and Running in 3 Steps
 
-### Step 1: Start Docker Containers
+### Step 1: Create your .env file
+
+```bash
+cp .env.example .env
+# Edit .env and set SECRET_KEY and passwords (do not commit real secrets)
+```
+
+### Step 2: Start Docker Containers
 
 ```bash
 docker-compose up --build
@@ -14,25 +21,19 @@ Wait for the initialization to complete (about 2-3 minutes). You'll see:
 - Superuser being created
 - Server starting on http://localhost:8000
 
-### Step 2: Access the API
+### Step 3: Access the API
 
 Open your browser and go to:
 - **Swagger UI**: http://localhost:8000/swagger/
 - **API**: http://localhost:8000/api/
 
-### Step 3: Authenticate in Swagger
+### Step 4: Authenticate in Swagger
 
 1. In Swagger UI, click the **"Authorize"** button (top right)
 2. Login first to get a token:
    - Go to `/api/auth/login/` endpoint
    - Click "Try it out"
-   - Use credentials:
-     ```json
-     {
-       "username": "admin",
-       "password": "admin123"
-     }
-     ```
+   - Use the credentials you set in `.env` (`ADMIN_USERNAME` / `ADMIN_PASSWORD`)
    - Execute and copy the `access` token from the response
 3. Click "Authorize" button again
 4. Paste: `Bearer <your-access-token>`

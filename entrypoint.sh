@@ -34,15 +34,24 @@ python manage.py migrate --noinput || {
     python manage.py migrate --noinput || exit 1
 }
 
-# Create superuser if it doesn't exist
+# Create superuser if it doesn't exist (parameterized via env vars)
 echo "Creating superuser..."
 python manage.py shell << END || echo "Superuser creation skipped"
 from django.contrib.auth import get_user_model
+import os
+
 User = get_user_model()
+
+admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+admin_email = os.environ.get('ADMIN_EMAIL', 'admin@example.com')
+admin_password = os.environ.get('ADMIN_PASSWORD', 'admin123')
+admin_role = os.environ.get('ADMIN_ROLE', 'admin')
+
 try:
-    if not User.objects.filter(username='admin').exists():
-        User.objects.create_superuser('admin', 'admin@example.com', 'admin123', role='admin')
-        print('Superuser created: username=admin, password=admin123')
+    if not User.objects.filter(username=admin_username).exists():
+        # CustomUser expects a role field; default to env-provided role
+        User.objects.create_superuser(admin_username, admin_email, admin_password, role=admin_role)
+        print(f"Superuser created: username={admin_username}")
     else:
         print('Superuser already exists')
 except Exception as e:

@@ -35,7 +35,13 @@ A comprehensive REST API for managing a DVD rental business, built with Django R
    cd E:\dvdrental
    ```
 
-2. **Build and start the containers**:
+2. **Copy environment template and set variables**:
+   ```bash
+   cp .env.example .env
+   # edit .env and set SECRET_KEY, passwords, etc.
+   ```
+
+3. **Build and start the containers**:
    ```bash
    docker-compose up --build
    ```
@@ -44,7 +50,7 @@ A comprehensive REST API for managing a DVD rental business, built with Django R
    - Download and set up PostgreSQL with the dvdrental sample database
    - Build the Django application
    - Run database migrations
-   - Create a default superuser (username: `admin`, password: `admin123`)
+   - Create a default superuser (from `.env`: `ADMIN_USERNAME`, `ADMIN_PASSWORD`)
    - Start the API server on http://localhost:8000
 
 3. **Access the application**:
@@ -53,12 +59,9 @@ A comprehensive REST API for managing a DVD rental business, built with Django R
    - **ReDoc Documentation**: http://localhost:8000/redoc/
    - **Django Admin**: http://localhost:8000/admin/
 
-### Default Credentials
+### Access Credentials
 
-**Superuser Account**:
-- Username: `admin`
-- Password: `admin123`
-- Role: `admin`
+The initial superuser is configured via `.env` (`ADMIN_USERNAME`, `ADMIN_PASSWORD`). Do not commit real credentials.
 
 ## API Documentation
 

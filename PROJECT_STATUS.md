@@ -1,3 +1,8 @@
+## Environment Configuration
+
+- Uses `.env` for all secrets and credentials
+- `docker-compose.yml` loads variables via `env_file`
+- See `env.example` for required keys; copy to `.env` and edit locally
 # Project Status - DVD Rental API
 
 ## ✅ Implementation Complete
