@@ -1,41 +1,30 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-from .views import (
-    CustomTokenObtainPairView, UserRegistrationView, UserViewSet,
-    ActorViewSet, CategoryViewSet, CountryViewSet, CityViewSet,
-    AddressViewSet, LanguageViewSet, FilmViewSet, FilmActorViewSet,
-    FilmCategoryViewSet, StoreViewSet, StaffViewSet, CustomerViewSet,
-    InventoryViewSet, RentalViewSet, PaymentViewSet
-)
-
-# Create router and register viewsets
-router = DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'actors', ActorViewSet)
-router.register(r'categories', CategoryViewSet)
-router.register(r'countries', CountryViewSet)
-router.register(r'cities', CityViewSet)
-router.register(r'addresses', AddressViewSet)
-router.register(r'languages', LanguageViewSet)
-router.register(r'films', FilmViewSet)
-router.register(r'film-actors', FilmActorViewSet)
-router.register(r'film-categories', FilmCategoryViewSet)
-router.register(r'stores', StoreViewSet)
-router.register(r'staff', StaffViewSet)
-router.register(r'customers', CustomerViewSet)
-router.register(r'inventory', InventoryViewSet)
-router.register(r'rentals', RentalViewSet)
-router.register(r'payments', PaymentViewSet)
+@api_view(['GET'])
+def api_root(request):
+    """API root endpoint with available endpoints"""
+    return Response({
+        'message': 'Authentication API',
+        'version': '1.0.0',
+        'status': 'running',
+        'endpoints': {
+            'authentication': '/api/auth/',
+            'documentation': {
+                'swagger': '/api/docs/',
+                'redoc': '/api/redoc/',
+                'schema': '/api/schema/'
+            }
+        },
+        'note': 'This is a public endpoint. Authentication is required for protected endpoints.'
+    })
 
 urlpatterns = [
-    # Authentication endpoints
-    path('auth/register/', UserRegistrationView.as_view(), name='register'),
-    path('auth/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # API root
+    path('', api_root, name='api-root'),
     
-    # API endpoints
-    path('', include(router.urls)),
+    # Authentication domain
+    path('auth/', include('api.authentication.urls')),
 ]
 

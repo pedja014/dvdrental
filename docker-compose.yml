@@ -2,22 +2,21 @@ services:
   db:
     image: postgres:15-alpine
     container_name: dvdrental-db
-    env_file:
-      - .env
     environment:
-      POSTGRES_DB: ${DATABASE_NAME}
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: dvdrental
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - dvdrental-network
 
   web:
     build: .
@@ -27,30 +26,27 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    env_file:
-      - .env
-    depends_on:
-      db:
-        condition: service_healthy
-
-  pgadmin:
-    image: dpage/pgadmin4:8
-    container_name: dvdrental-pgadmin
-    env_file:
-      - .env
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    ports:
-      - "5050:80"
+      DATABASE_NAME: dvdrental
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres123
+      DATABASE_HOST: dvdrental-db
+      DATABASE_PORT: 5432
+      SECRET_KEY: your-secret-key-here
+      DEBUG: "True"
     depends_on:
       db:
         condition: service_healthy
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-      - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
+    networks:
+      - dvdrental-network
+
+networks:
+  dvdrental-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
 
 volumes:
   postgres_data:
-  pgadmin_data:
 
