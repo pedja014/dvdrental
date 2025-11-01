@@ -15,6 +15,7 @@ def api_root(request):
             'categories': '/api/categories/',
             'payments': '/api/payments/',
             'rentals': '/api/rentals/',
+            'analytics': '/api/analytics/',
             'documentation': {
                 'swagger': '/api/docs/',
                 'redoc': '/api/redoc/',
@@ -36,5 +37,8 @@ urlpatterns = [
     path('categories/', include('api.categories.urls')),
     path('payments/', include('api.payments.urls')),
     path('rentals/', include('api.rentals.urls')),
+    
+    # Analytics domain
+    path('analytics/', include('api.analytics.urls')),
 ]
 
