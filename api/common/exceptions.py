@@ -66,3 +66,10 @@ class EmailSendingError(BusinessLogicError):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     default_detail = 'Failed to send email. Please try again later.'
     default_code = 'email_sending_error'
+
+
+class NotFoundError(BusinessLogicError):
+    """Exception raised when a resource is not found"""
+    status_code = status.HTTP_404_NOT_FOUND
+    default_detail = 'Resource not found.'
+    default_code = 'not_found'

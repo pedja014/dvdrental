@@ -1,0 +1,4 @@
+"""
+Rentals domain.
+"""
+

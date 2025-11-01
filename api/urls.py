@@ -6,11 +6,15 @@ from rest_framework.response import Response
 def api_root(request):
     """API root endpoint with available endpoints"""
     return Response({
-        'message': 'Authentication API',
+        'message': 'DVD Rental API',
         'version': '1.0.0',
         'status': 'running',
         'endpoints': {
             'authentication': '/api/auth/',
+            'films': '/api/films/',
+            'categories': '/api/categories/',
+            'payments': '/api/payments/',
+            'rentals': '/api/rentals/',
             'documentation': {
                 'swagger': '/api/docs/',
                 'redoc': '/api/redoc/',
@@ -26,5 +30,11 @@ urlpatterns = [
     
     # Authentication domain
     path('auth/', include('api.authentication.urls')),
+    
+    # Business domains
+    path('films/', include('api.films.urls')),
+    path('categories/', include('api.categories.urls')),
+    path('payments/', include('api.payments.urls')),
+    path('rentals/', include('api.rentals.urls')),
 ]
 

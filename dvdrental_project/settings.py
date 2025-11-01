@@ -97,6 +97,14 @@ DATABASES = {
         'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'postgres123'),
         'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
         'PORT': os.environ.get('DATABASE_PORT', '5432'),
+    },
+    'dvdrental_sample': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DVDRENTAL_DB', 'dvdrental_sample'),
+        'USER': os.environ.get('DATABASE_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'postgres123'),
+        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+        'PORT': os.environ.get('DATABASE_PORT', '5432'),
     }
 }
 
@@ -194,7 +202,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 # DRF Spectacular Settings
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Authentication API',
+    'TITLE': 'DVD Rental API + Authentication',
     'DESCRIPTION': 'A clean, minimal Django REST API focused solely on authentication functionality.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
@@ -214,17 +222,28 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'api.common.exception_handler.custom_exception_handler',
 }
 
-# Email configuration
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
+# Email configuration (env-driven)
+def _get_bool(env_key: str, default: bool) -> bool:
+    val = os.environ.get(env_key)
+    if val is None:
+        return default
+    return val.strip().lower() in ['1', 'true', 'yes', 'on']
+
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.console.EmailBackend'
+)
+
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@dvdrental.com')
 SITE_NAME = os.environ.get('SITE_NAME', 'DVD Rental')
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
 
-# For production, use SMTP:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+if EMAIL_BACKEND == 'django.core.mail.backends.smtp.EmailBackend' or os.environ.get('USE_SMTP', '').lower() in ['1', 'true', 'yes', 'on']:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+    EMAIL_USE_TLS = _get_bool('EMAIL_USE_TLS', True)
+    EMAIL_USE_SSL = _get_bool('EMAIL_USE_SSL', False)
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 

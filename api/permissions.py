@@ -45,3 +45,20 @@ class ReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.method in permissions.SAFE_METHODS
 
+
+class IsAuthenticatedReadOnly(permissions.BasePermission):
+    """
+    Permission class that allows authenticated users read-only access,
+    and staff/admin full access.
+    """
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        
+        # Staff and admin have full access
+        if request.user.role in ['staff', 'admin']:
+            return True
+        
+        # Customers only have read access
+        return request.method in permissions.SAFE_METHODS
+

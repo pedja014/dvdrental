@@ -1,8 +1,8 @@
 {
 	"info": {
 		"_postman_id": "dvd-rental-auth-api",
-		"name": "DVD Rental Auth API",
-		"description": "Complete authentication system for DVD Rental Management API following Django Styleguide",
+		"name": "DVD Rental API",
+		"description": "Complete DVD Rental Management API with authentication and CRUD operations for Films, Categories, Payments, and Rentals following Django Styleguide",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "dvd-rental-auth"
 	},
@@ -1027,6 +1027,595 @@
 				}
 			],
 			"description": "Pre-configured test scenarios for common authentication flows"
+		},
+		{
+			"name": "Films",
+			"item": [
+				{
+					"name": "List Films",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.results && response.results.length > 0) {",
+									"        pm.environment.set('film_id', response.results[0].film_id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/films/?page=1&page_size=20&search={{search_term}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "films", ""],
+							"query": [
+								{"key": "page", "value": "1", "description": "Page number"},
+								{"key": "page_size", "value": "20", "description": "Items per page"},
+								{"key": "search", "value": "{{search_term}}", "description": "Search term (optional)", "disabled": true}
+							]
+						},
+						"description": "List all films with pagination. Supports search by title/description. Authenticated users can read, staff/admin can create."
+					}
+				},
+				{
+					"name": "Get Film Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/films/{{film_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "films", "{{film_id}}", ""]
+						},
+						"description": "Get detailed information about a specific film. Requires authentication."
+					}
+				},
+				{
+					"name": "Create Film",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('film_id', response.film_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"The Great Adventure\",\n    \"description\": \"An epic tale of adventure and discovery\",\n    \"release_year\": 2024,\n    \"language_id\": 1,\n    \"rental_duration\": 7,\n    \"rental_rate\": \"4.99\",\n    \"length\": 120,\n    \"replacement_cost\": \"19.99\",\n    \"rating\": \"PG\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/films/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "films", ""]
+						},
+						"description": "Create a new film. Requires staff/admin role."
+					}
+				},
+				{
+					"name": "Update Film",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"The Great Adventure (Updated)\",\n    \"description\": \"Updated description\",\n    \"rental_rate\": \"5.99\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/films/{{film_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "films", "{{film_id}}", ""]
+						},
+						"description": "Update an existing film. Requires staff/admin role."
+					}
+				},
+				{
+					"name": "Delete Film",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/films/{{film_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "films", "{{film_id}}", ""]
+						},
+						"description": "Delete a film. Requires staff/admin role."
+					}
+				}
+			],
+			"description": "Film CRUD operations. Customers have read-only access, staff/admin have full access."
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "List Categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.results && response.results.length > 0) {",
+									"        pm.environment.set('category_id', response.results[0].category_id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/categories/?page=1&page_size=20",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories", ""],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "20"}
+							]
+						},
+						"description": "List all categories with pagination. Authenticated users can read, staff/admin can create."
+					}
+				},
+				{
+					"name": "Get Category Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/categories/{{category_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories", "{{category_id}}", ""]
+						},
+						"description": "Get detailed information about a specific category."
+					}
+				},
+				{
+					"name": "Create Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('category_id', response.category_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Sci-Fi\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/categories/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories", ""]
+						},
+						"description": "Create a new category. Requires staff/admin role."
+					}
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Science Fiction\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/categories/{{category_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories", "{{category_id}}", ""]
+						},
+						"description": "Update a category. Requires staff/admin role."
+					}
+				},
+				{
+					"name": "Delete Category",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/categories/{{category_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories", "{{category_id}}", ""]
+						},
+						"description": "Delete a category. Requires staff/admin role."
+					}
+				}
+			],
+			"description": "Category CRUD operations. Customers have read-only access, staff/admin have full access."
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "List Payments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.results && response.results.length > 0) {",
+									"        pm.environment.set('payment_id', response.results[0].payment_id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/payments/?page=1&page_size=20&customer_id={{customer_id}}&staff_id={{staff_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", ""],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "20"},
+								{"key": "customer_id", "value": "{{customer_id}}", "disabled": true},
+								{"key": "staff_id", "value": "{{staff_id}}", "disabled": true}
+							]
+						},
+						"description": "List payments with pagination and optional filtering. Staff/admin only."
+					}
+				},
+				{
+					"name": "Get Payment Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/payments/{{payment_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "{{payment_id}}", ""]
+						},
+						"description": "Get detailed information about a specific payment. Staff/admin only."
+					}
+				},
+				{
+					"name": "Create Payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('payment_id', response.payment_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customer_id\": 1,\n    \"staff_id\": 1,\n    \"rental_id\": null,\n    \"amount\": \"9.99\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/payments/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", ""]
+						},
+						"description": "Create a new payment. Requires staff/admin role."
+					}
+				},
+				{
+					"name": "Update Payment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": \"14.99\",\n    \"rental_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/payments/{{payment_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "{{payment_id}}", ""]
+						},
+						"description": "Update a payment. Requires staff/admin role."
+					}
+				},
+				{
+					"name": "Delete Payment",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/payments/{{payment_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "{{payment_id}}", ""]
+						},
+						"description": "Delete a payment. Requires staff/admin role."
+					}
+				}
+			],
+			"description": "Payment CRUD operations. Staff/admin only."
+		},
+		{
+			"name": "Rentals",
+			"item": [
+				{
+					"name": "List Rentals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.results && response.results.length > 0) {",
+									"        pm.environment.set('rental_id', response.results[0].rental_id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/rentals/?page=1&page_size=20&customer_id={{customer_id}}&staff_id={{staff_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "rentals", ""],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "20"},
+								{"key": "customer_id", "value": "{{customer_id}}", "disabled": true},
+								{"key": "staff_id", "value": "{{staff_id}}", "disabled": true}
+							]
+						},
+						"description": "List rentals with pagination and optional filtering. Staff/admin only."
+					}
+				},
+				{
+					"name": "Get Rental Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/rentals/{{rental_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "rentals", "{{rental_id}}", ""]
+						},
+						"description": "Get detailed information about a specific rental. Staff/admin only."
+					}
+				},
+				{
+					"name": "Create Rental",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('rental_id', response.rental_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"inventory_id\": 1,\n    \"customer_id\": 1,\n    \"staff_id\": 1,\n    \"rental_date\": \"2024-01-01T10:00:00Z\",\n    \"return_date\": null\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/rentals/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "rentals", ""]
+						},
+						"description": "Create a new rental. Requires staff/admin role."
+					}
+				},
+				{
+					"name": "Update Rental",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"return_date\": \"2024-01-08T10:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/rentals/{{rental_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "rentals", "{{rental_id}}", ""]
+						},
+						"description": "Update a rental (e.g., set return_date). Requires staff/admin role."
+					}
+				},
+				{
+					"name": "Delete Rental",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/rentals/{{rental_id}}/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "rentals", "{{rental_id}}", ""]
+						},
+						"description": "Delete a rental. Requires staff/admin role."
+					}
+				}
+			],
+			"description": "Rental CRUD operations. Staff/admin only."
 		}
 	],
 	"event": [

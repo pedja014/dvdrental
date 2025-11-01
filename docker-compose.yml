@@ -6,15 +6,36 @@ services:
       POSTGRES_DB: dvdrental
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres123
+      LOAD_DVDRENTAL: "true"          # enable automated dvdrental restore on first init
+      DVDRENTAL_DB: dvdrental_sample   # target database name for the sample
+      # Optional: provide a direct URL to dvdrental.tar to auto-download
+      # DVDRENTAL_URL: https://example.com/path/to/dvdrental.tar
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./db_init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - dvdrental-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: dvdrental-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
     networks:
       - dvdrental-network
 
@@ -49,4 +70,5 @@ networks:
 
 volumes:
   postgres_data:
+  pgadmin_data:
 
